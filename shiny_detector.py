@@ -1,29 +1,44 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot
 
 #desired_pokemon = 'normal_pokemon/483.png'
-desired_pokemon = 'normal_pokemon/483.png'
+#desired_pokemon = 'normal_pokemon/483.png'
 
-target_pokemon = cv2.imread(desired_pokemon, cv2.IMREAD_UNCHANGED)
-screenshot_image = cv2.imread('screenshot.png')
-screenshot_image_gray = cv2.cvtColor(screenshot_image, cv2.COLOR_BGR2GRAY)
-w, h = target_pokemon.shape[::-1]
+target_img = cv2.imread('399.png')
+screenshot_img = cv2.imread('screenshot.png')
 
-# All the 6 methods for comparison in a list
-methods = ['cv.TM_CCOEFF', 'cv.TM_CCOEFF_NORMED', 'cv.TM_CCORR',
-            'cv.TM_CCORR_NORMED', 'cv.TM_SQDIFF', 'cv.TM_SQDIFF_NORMED']
+#cv2.imshow('Dialga', target_img)
+#cv2.waitKey()
+#cv2.destroyAllWindows()
 
-res = cv2.matchTemplate(screenshot_image_gray, target_pokemon, cv2.TM_CCOEFF_NORMED)
+#cv2.imshow('Screen', screenshot_img)
+#cv2.waitKey()
+#cv2.destroyAllWindows()
 
-threshold = 0.8
+result = cv2.matchTemplate(screenshot_img, target_img, cv2.TM_CCOEFF_NORMED)
 
-loc = np.where( res >= threshold)
+min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
 
-for pt in zip(*loc[::-1]):
-    cv2.rectangle(screenshot_image, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+print(max_loc)
+print(max_val)
 
-cv2.imwrite('res.png', screenshot_image)
+w = target_img.shape[1]
+h = target_img.shape[0]
+
+cv2.rectangle(screenshot_img, max_loc, (max_loc[0] + w, max_loc[1] + h), (0, 0, 255), 2)
+
+cv2.imshow('Screen', screenshot_img)
+cv2.waitKey()
+cv2.destroyAllWindows()
+
+#threshold = 0.8
+
+#loc = np.where( result >= threshold)
+
+#for pt in zip(*loc[::-1]):
+#    cv2.rectangle(screenshot_image, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 2)
+
+#cv2.imwrite('res.png', screenshot_image)
 
 #min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
@@ -32,12 +47,3 @@ cv2.imwrite('res.png', screenshot_image)
 #bottom_right = (top_left[0] + w, top_left[1] + h)
 
 #cv2.rectangle(screenshot_image, top_left, bottom_right, 255, 2)
-
-#pyplot.subplot(121), pyplot.imshow(res,cmap = 'gray')
-#pyplot.title('Matching Result'), pyplot.xticks([]), pyplot.yticks([])
-
-#pyplot.subplot(122), pyplot.imshow(res,cmap = 'gray')
-#pyplot.title('Detect Result'), pyplot.xticks([]), pyplot.yticks([])
-#pyplot.suptitle('Result')
-
-#pyplot.show()
